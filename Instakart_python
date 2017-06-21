@@ -1,0 +1,46 @@
+import os
+import pandas as pd
+import  numpy as np
+from sklearn.cross_validation import train_test_split
+from sklearn.cross_validation import StratifiedShuffleSplit
+from sklearn import tree
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+os.chdir("D:/Geetha/Examples/Kaggle/Instakart Market Basket Analysis")
+aisles = pd.read_csv("D:/Geetha/Examples/Kaggle/Instakart Market Basket Analysis/aisles.csv")
+departments = pd.read_csv("D:/Geetha/Examples/Kaggle/Instakart Market Basket Analysis/departments.csv")
+order_prior = pd.read_csv("D:/Geetha/Examples/Kaggle/Instakart Market Basket Analysis/order_products__prior.csv")
+order_train = pd.read_csv("D:/Geetha/Examples/Kaggle/Instakart Market Basket Analysis/order_products__train.csv")
+orders = pd.read_csv("D:/Geetha/Examples/Kaggle/Instakart Market Basket Analysis/orders.csv")
+products = pd.read_csv("D:/Geetha/Examples/Kaggle/Instakart Market Basket Analysis/products.csv")
+
+#merge the data train and orders
+
+order_train_1 = pd.merge(order_train, orders, on = "order_id", how = 'left')
+cols = order_train_1.columns.tolist()
+cols = cols[2:]+cols[0:2]
+order_train_1 = order_train_1[cols]
+#split = StratifiedShuffleSplit(order_train_1[-1:], test_size= 0.20, n_iter = 1, random_state=81)
+
+train,test = train_test_split(order_train_1, test_size = 0.20)
+
+def get_data(data):
+    x=data[0:-1]
+    y=data[-1:]
+    return x,y
+
+def build_model(x,y):
+
+    model_dt = tree.DecisionTreeClassifier(criterion='entropy')
+    model_dt = model_dt.fit(x,y)
+    return model_dt
+
+x,y = get_data(train)
+build_model(x,y)
+
+
+
+
+
+
+
